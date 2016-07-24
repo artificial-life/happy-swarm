@@ -1,3 +1,8 @@
+# Project
+bower_components/
+node_modules/
+build/
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db

@@ -1,0 +1,28 @@
+{
+  "name": "happy-swarm",
+  "description": "one tool to rule them all",
+  "main": "www/index.html",
+  "authors": [
+    "artificial.life"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "microservices"
+  ],
+  "homepage": "https://github.com/artificial-life/happy-swarm",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "paper-elements": "PolymerElements/paper-elements#~1.0.7",
+    "iron-elements": "PolymerElements/iron-elements#~1.0.10",
+    "lodash": "~4.13.1",
+    "app-elements": "PolymerElements/app-elements#~0.9.0",
+    "app-layout": "PolymerElements/app-layout#~0.10.1"
+  }
+}
