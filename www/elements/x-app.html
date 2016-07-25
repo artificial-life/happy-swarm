@@ -20,61 +20,68 @@
 
 <dom-module id="x-app">
 
-    <template>
+  <template>
 
-        <style>
-            app-header {
-                background-color: #00897B;
-                color: #fff;
-            }
+    <style>
+      app-header {
+        background-color: #00897B;
+        color: #fff;
+      }
 
-            app-header paper-icon-button {
-                --paper-icon-button-ink-color: white;
-            }
+      app-header paper-icon-button {
+        --paper-icon-button-ink-color: white;
+      }
 
-            paper-fab {
-                position: fixed;
-                right: 24px;
-                bottom: 24px;
-                --paper-fab-background: var(--google-blue-500);
-                --paper-fab-keyboard-focus-background: var(--google-blue-700);
-            }
+      paper-fab {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        --paper-fab-background: var(--google-blue-500);
+        --paper-fab-keyboard-focus-background: var(--google-blue-700);
+      }
 
-        </style>
-        <iron-ajax url="/data/repositories" auto last-response="{{repositories}}"></iron-ajax>
-        <app-drawer-layout>
+      .repo-info {
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+        padding: 16px;
+        margin: 24px;
+      }
+    </style>
+    <iron-ajax url="/data/repositories" auto last-response="{{repositories}}"></iron-ajax>
+    <app-drawer-layout>
 
-            <app-drawer>
-                <section></section>
-            </app-drawer>
+      <app-drawer>
+        <section></section>
+      </app-drawer>
 
-            <app-header-layout>
+      <app-header-layout>
 
-                <app-header fixed condenses shadow effects="resize-title">
-                    <app-toolbar>
-                        <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-                        <div condensed-title>Test Drive app-header</div>
-                    </app-toolbar>
+        <app-header fixed condenses shadow effects="resize-title">
+          <app-toolbar>
+            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+            <div condensed-title>Test Drive app-header</div>
+          </app-toolbar>
 
-                    <app-toolbar></app-toolbar>
+          <app-toolbar></app-toolbar>
 
-                    <app-toolbar>
-                        <div main-title spacer>Test Drive</div>
-                    </app-toolbar>
-                </app-header>
+          <app-toolbar>
+            <div main-title spacer>Test Drive</div>
+          </app-toolbar>
+        </app-header>
 
-                <template is="dom-repeat" items="[[repositories]]">
-                    <paper-card>Q</paper-card>
-                </template>
+        <template is="dom-repeat" items="[[repositories]]">
+          <div class="repo-info">[[item.name]]</div>
+        </template>
 
-            </app-header-layout>
-            <paper-fab icon="add"></paper-fab>
-        </app-drawer-layout>
+      </app-header-layout>
+      <paper-fab icon="add"></paper-fab>
+    </app-drawer-layout>
 
-    </template>
+  </template>
 
-    <script>
-        Polymer({is: 'x-app'});
-    </script>
+  <script>
+    Polymer({
+      is: 'x-app'
+    });
+  </script>
 
 </dom-module>
