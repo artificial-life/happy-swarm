@@ -49,7 +49,7 @@ server.register(require('inert'), (err) => {
 	});
 	server.route({
 		method: 'GET',
-		path: '/elements/{param}',
+		path: '/elements/{param*}',
 		handler: {
 			directory: {
 				path: 'www/elements',

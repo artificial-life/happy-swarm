@@ -1,0 +1,111 @@
+<link rel="import" href="../../polymer/polymer.html">
+
+<link rel="import" href="../../paper-dialog/paper-dialog.html">
+<link rel="import" href="../../paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../paper-button/paper-button.html">
+<link rel="import" href="../../paper-input/paper-input.html">
+<link rel="import" href="../../paper-progress/paper-progress.html">
+<link rel="import" href="../../neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../../neon-animation/animations/fade-out-animation.html">
+
+<dom-module id="repo-dialog">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      .dialog {
+        width: 640px;
+      }
+
+      paper-progress {
+        width: 100%
+      }
+
+      #progress-container {
+        height: 15px;
+      }
+    </style>
+    <iron-ajax  auto url="{{requestUrl}}" loading="{{requestInProgress}}" last-response="{{response}}" handle-as="json" on-response="handleResponse"></iron-ajax>
+    <iron-ajax  auto method="PUT" url="{{saveUrl}}" loading="{{savingInProgress}}" last-response="{{saveResponse}}" handle-as="json" on-response="saveSuccess" on-error="saveError"></iron-ajax>
+
+    <paper-dialog class="dialog" id="dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+      <h2>Add repository</h2>
+      <paper-dialog-scrollable>
+        <paper-input label="Repository URL" disabled$="{{requestInProgress}}" value="{{url}}" invalid="{{canQuery}}" required auto-validate></paper-input>
+        <div id="progress-container">
+          <paper-progress hidden$="{{!requestInProgress}}" indeterminate ></paper-progress>
+        </div>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button on-tap="queryRepository" disabled$="[[canQuery]]">Add</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog class="dialog" id="confirm">
+      <h2>Confirm repository</h2>
+      <paper-dialog-scrollable>
+        <paper-input label="Name" value="{{package.name}}"></paper-input>
+        <paper-input label="Description" value="{{package.description}}"></paper-input>
+        <div id="progress-container">
+          <paper-progress hidden$="{{!savingInProgress}}" indeterminate ></paper-progress>
+        </div>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button on-tap="addRepository">Confirm</paper-button>
+      </div>
+    </paper-dialog>
+
+
+  </template>
+  <script>
+    (function() {
+      'use strict'
+
+      Polymer({
+        is: 'repo-dialog',
+        properties: {
+          canQuery: {
+            type: Boolean,
+            value: true
+          }
+        },
+        addRepository() {
+          this.$.confirm.close();
+          this.fire('add-repo',  this.package);
+        },
+        queryRepository() {
+          this.canFinish = false;
+          let parts = this.url.split('/')
+          let [owner, repo] = _.chain(parts).takeRight(2).map(i => i.replace('.git', ''));
+          let base = `https://api.github.com/repos/${owner}/${repo}/contents/package.json`;
+          this.set('requestUrl', base);
+          this.set('owner', owner);
+          this.set('repo', repo);
+        },
+        handleResponse(e) {
+          let pckg = JSON.parse(atob(this.response.content));
+          if (!pckg) return;
+
+          this.canFinish = true;
+          this.set('package', pckg);
+          this.$.dialog.close();
+          this.$.confirm.open();
+        },
+        open() {
+          this.requestInProgress = false;
+          this.savingInProgress = false;
+          this.canFinish = false;
+          this.url = '';
+          this.$.dialog.open();
+        },
+        close() {
+          this.$.dialog.close();
+        }
+      });
+    })();
+  </script>
+</dom-module>

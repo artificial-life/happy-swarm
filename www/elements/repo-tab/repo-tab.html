@@ -1,0 +1,75 @@
+<link rel="import" href="../../polymer/polymer.html">
+
+<link rel="import" href="../../neon-animation/neon-animation-runner-behavior.html">
+
+
+<dom-module id="repo-tab">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      .repo-info {
+        transition: 1s height;
+        height: 60px;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+        padding: 16px;
+        margin: 24px;
+      }
+    </style>
+    <div class="repo-info" on-tap="test">[[item.name]]</div>
+  </template>
+  <script>
+    Polymer({
+      is: 'repo-tab',
+
+      behaviors: [
+        Polymer.NeonAnimationRunnerBehavior
+      ],
+      properties: {
+        item: {
+          type: Object
+        },
+        animationConfig: {
+          type: Object,
+          value: function() {
+            return {
+              'entry': [{
+                name: 'scale-up-animation',
+                node: this,
+                transformOrigin: '0 0'
+              }],
+              'exit': [{
+                name: 'fade-out-animation',
+                node: this
+              }]
+            }
+          }
+        },
+        _showing: {
+          type: Boolean,
+          value: false
+        }
+      },
+      listeners: {
+        'neon-animation-finish': '_onAnimationFinish'
+      },
+      _onAnimationFinish: function() {
+        if (this._showing) {} else {
+          this.style.display = '';
+        }
+      },
+      ready(){
+        this.show();
+      },
+      show: function() {
+        this._showing = true;
+        this.playAnimation('entry');
+      },
+      hide: function() {
+        this._showing = false;
+        this.playAnimation('exit');
+      }
+    });
+  </script>
+</dom-module>
