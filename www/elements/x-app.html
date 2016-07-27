@@ -9,6 +9,7 @@
 <link rel="import" href="../../app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../../app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../../app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../app-layout/app-scrollpos-control/app-scrollpos-control.html">
 <link rel="import" href="../../app-layout/app-header/app-header.html">
 <link rel="import" href="../../app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../../app-layout/app-toolbar/app-toolbar.html">
@@ -49,14 +50,14 @@
         --paper-fab-background: var(--google-blue-500);
         --paper-fab-keyboard-focus-background: var(--google-blue-700);
       }
-
-    
     </style>
+
+
     <iron-ajax url="/data/repositories" auto last-response="{{repositories}}"></iron-ajax>
     <repo-dialog id="dialog" on-add-repo="addRepository"></repo-dialog>
 
     <app-location route="{{route}}" use-hash-as-path></app-location>
-    <app-route route="{{route}}" pattern="/:page" data="{{data}}">    </app-route>
+    <app-route route="{{route}}" pattern="/:page" data="{{data}}"> </app-route>
 
     <app-drawer-layout>
       <app-drawer>
@@ -78,9 +79,12 @@
           </app-toolbar>
         </app-header>
 
-        <template is="dom-repeat" items="[[repositories]]">
-          <repo-tab item="[[item]]"></repo-tab>
-        </template>
+        <section id="repo-list">
+
+          <template is="dom-repeat" items="[[repositories]]">
+            <repo-tab id$="[[item.name]]" item="[[item]]"></repo-tab>
+          </template>
+        </section>
 
       </app-header-layout>
       <paper-fab icon="add" on-tap="openDialog"></paper-fab>
@@ -91,12 +95,15 @@
   <script>
     Polymer({
       is: 'x-app',
-      openDialog(){
+      openDialog() {
         this.$.dialog.open();
       },
-      addRepository(e){
-      let pckg = e.detail;
-      this.push('repositories',pckg);
+      addRepository(e) {
+        let pckg = e.detail;
+        this.push('repositories', pckg);
+        this.async(() => {
+          document.body.scrollTop = this.$["repo-list"].scrollHeight;
+        }, 100);
       }
     });
   </script>

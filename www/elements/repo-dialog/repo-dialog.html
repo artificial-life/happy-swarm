@@ -8,6 +8,10 @@
 <link rel="import" href="../../neon-animation/animations/scale-up-animation.html">
 <link rel="import" href="../../neon-animation/animations/fade-out-animation.html">
 
+<link rel="import" href="../../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../paper-item/paper-item.html">
+<link rel="import" href="../../paper-listbox/paper-listbox.html">
+
 <dom-module id="repo-dialog">
   <template>
     <style>
@@ -26,16 +30,45 @@
       #progress-container {
         height: 15px;
       }
+
+      .repo-string {
+        @apply(--layout-horizontal);
+      }
+
+      .repo-string paper-input {
+        @apply(--layout-flex);
+        padding-left: 10px;
+      }
     </style>
-    <iron-ajax  auto url="{{requestUrl}}" loading="{{requestInProgress}}" last-response="{{response}}" handle-as="json" on-response="handleResponse"></iron-ajax>
-    <iron-ajax  auto method="PUT" url="{{saveUrl}}" loading="{{savingInProgress}}" last-response="{{saveResponse}}" handle-as="json" on-response="saveSuccess" on-error="saveError"></iron-ajax>
+    <iron-ajax id="git"  url="{{requestUrl}}" loading="{{requestInProgress}}" last-response="{{response}}" handle-as="json" on-response="handleResponse"></iron-ajax>
+    <iron-ajax id="serv"
+    content-type="application/json"
+    method="POST"
+    url="/repository/add"
+    loading="{{savingInProgress}}"
+    body="{{package}}"
+    last-response="{{saveResponse}}"
+    handle-as="json"
+    on-response="saveSuccess"
+    on-error="saveError">
+  </iron-ajax>
 
     <paper-dialog class="dialog" id="dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
       <h2>Add repository</h2>
       <paper-dialog-scrollable>
-        <paper-input label="Repository URL" disabled$="{{requestInProgress}}" value="{{url}}" invalid="{{canQuery}}" required auto-validate></paper-input>
+
+        <div class="repo-string" disabled$="{{requestInProgress}}">
+          <paper-dropdown-menu>
+            <paper-listbox class="dropdown-content" selected="0">
+              <paper-item>https://github.com</paper-item>
+            </paper-listbox>
+          </paper-dropdown-menu>
+
+          <paper-input label="Repository URL" disabled$="{{requestInProgress}}" value="{{url}}" invalid="{{canQuery}}" required auto-validate></paper-input>
+        </div>
+
         <div id="progress-container">
-          <paper-progress hidden$="{{!requestInProgress}}" indeterminate ></paper-progress>
+          <paper-progress hidden$="{{!requestInProgress}}" indeterminate></paper-progress>
         </div>
       </paper-dialog-scrollable>
       <div class="buttons">
@@ -50,7 +83,7 @@
         <paper-input label="Name" value="{{package.name}}"></paper-input>
         <paper-input label="Description" value="{{package.description}}"></paper-input>
         <div id="progress-container">
-          <paper-progress hidden$="{{!savingInProgress}}" indeterminate ></paper-progress>
+          <paper-progress hidden$="{{!savingInProgress}}" indeterminate></paper-progress>
         </div>
       </paper-dialog-scrollable>
       <div class="buttons">
@@ -71,11 +104,25 @@
           canQuery: {
             type: Boolean,
             value: true
+          },
+          url: {
+            type: String,
+            observer: '_clearUrl'
           }
         },
-        addRepository() {
+        _clearUrl() {
+          this.url = this.url.replace('https://github.com', '');
+        },
+        saveError(e){
+          console.log('error',e);
+        },
+        saveSuccess() {
           this.$.confirm.close();
-          this.fire('add-repo',  this.package);
+          this.fire('add-repo', this.package);
+        },
+        addRepository() {
+
+          this.$.serv.generateRequest();
         },
         queryRepository() {
           this.canFinish = false;
@@ -85,6 +132,8 @@
           this.set('requestUrl', base);
           this.set('owner', owner);
           this.set('repo', repo);
+
+          this.$.git.generateRequest();
         },
         handleResponse(e) {
           let pckg = JSON.parse(atob(this.response.content));

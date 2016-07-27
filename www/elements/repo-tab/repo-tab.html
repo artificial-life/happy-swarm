@@ -1,6 +1,7 @@
 <link rel="import" href="../../polymer/polymer.html">
 
 <link rel="import" href="../../neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../../paper-icon-button/paper-icon-button.html">
 
 
 <dom-module id="repo-tab">
@@ -9,6 +10,7 @@
       :host {
         display: block;
       }
+
       .repo-info {
         transition: 1s height;
         height: 60px;
@@ -16,8 +18,23 @@
         padding: 16px;
         margin: 24px;
       }
+
+      .title {
+        font-weight: bold;
+        @apply(--layout-horizontal);
+        @apply(--layout-justified);
+      }
+
+      .title span {
+        padding: 8px 0;
+      }
     </style>
-    <div class="repo-info" on-tap="test">[[item.name]]</div>
+    <div class="repo-info" on-tap="test">
+      <div class="title"> <span>[[item.name]] </span>
+        <paper-icon-button icon="more-vert"></paper-icon-button>
+      </div>
+      <div class="description"> [[item.description]] </div>
+    </div>
   </template>
   <script>
     Polymer({
@@ -59,7 +76,7 @@
           this.style.display = '';
         }
       },
-      ready(){
+      ready() {
         this.show();
       },
       show: function() {

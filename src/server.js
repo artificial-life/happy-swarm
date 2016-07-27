@@ -3,6 +3,8 @@
 const Hapi = require('hapi');
 
 const server = new Hapi.Server();
+const repo = require('./repository/main.js');
+
 server.connection({
 	port: 3000
 });
@@ -47,6 +49,13 @@ server.register(require('inert'), (err) => {
 			}
 		}
 	});
+
+	server.route({
+		method: 'POST',
+		path: '/repository/add',
+		handler: repo.update
+	});
+	
 	server.route({
 		method: 'GET',
 		path: '/elements/{param*}',
