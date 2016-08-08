@@ -40,18 +40,9 @@
         padding-left: 10px;
       }
     </style>
-    <iron-ajax id="git"  url="{{requestUrl}}" loading="{{requestInProgress}}" last-response="{{response}}" handle-as="json" on-response="handleResponse"></iron-ajax>
-    <iron-ajax id="serv"
-    content-type="application/json"
-    method="POST"
-    url="/repository/add"
-    loading="{{savingInProgress}}"
-    body="{{package}}"
-    last-response="{{saveResponse}}"
-    handle-as="json"
-    on-response="saveSuccess"
-    on-error="saveError">
-  </iron-ajax>
+    <iron-ajax id="git" url="{{requestUrl}}" loading="{{requestInProgress}}" last-response="{{response}}" handle-as="json" on-response="handleResponse"></iron-ajax>
+    <iron-ajax id="serv" content-type="application/json" method="POST" url="/repository" loading="{{savingInProgress}}" body="{{package}}" last-response="{{saveResponse}}" handle-as="json" on-response="saveSuccess" on-error="saveError">
+    </iron-ajax>
 
     <paper-dialog class="dialog" id="dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
       <h2>Add repository</h2>
@@ -113,8 +104,8 @@
         _clearUrl() {
           this.url = this.url.replace('https://github.com', '');
         },
-        saveError(e){
-          console.log('error',e);
+        saveError(e) {
+          console.log('error', e);
         },
         saveSuccess() {
           this.$.confirm.close();

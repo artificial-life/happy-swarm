@@ -26,7 +26,7 @@ server.register(require('inert'), (err) => {
 	server.route({
 		method: 'GET',
 		path: '/',
-		handler: function(request, reply) {
+		handler: function (request, reply) {
 			reply.file('./www/index.html');
 		}
 	});
@@ -35,7 +35,7 @@ server.register(require('inert'), (err) => {
 		method: 'GET',
 		path: '/{param*}',
 		handler: {
-			file: function(request) {
+			file: function (request) {
 				return "./bower_components/" + request.params.param;
 			}
 		}
@@ -44,7 +44,7 @@ server.register(require('inert'), (err) => {
 		method: 'GET',
 		path: '/data/{data_file*}',
 		handler: {
-			file: function(request) {
+			file: function (request) {
 				return `./data/${request.params.data_file}.json`;
 			}
 		}
@@ -52,10 +52,16 @@ server.register(require('inert'), (err) => {
 
 	server.route({
 		method: 'POST',
-		path: '/repository/add',
-		handler: repo.update
+		path: '/repository',
+		handler: repo.add
 	});
-	
+
+	server.route({
+		method: 'DELETE',
+		path: '/repository',
+		handler: repo.delete
+	});
+
 	server.route({
 		method: 'GET',
 		path: '/elements/{param*}',

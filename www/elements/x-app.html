@@ -23,6 +23,9 @@
 <link rel="import" href="../../paper-fab/paper-fab.html">
 <link rel="import" href="../../paper-card/paper-card.html">
 <link rel="import" href="../../paper-button/paper-button.html">
+<link rel="import" href="../../paper-item/paper-item.html">
+<link rel="import" href="../../paper-listbox/paper-listbox.html">
+<link rel="import" href="../../neon-animation/neon-animation.html">
 
 <link rel="import" href="repo-dialog/repo-dialog.html">
 <link rel="import" href="repo-tab/repo-tab.html">
@@ -50,6 +53,14 @@
         --paper-fab-background: var(--google-blue-500);
         --paper-fab-keyboard-focus-background: var(--google-blue-700);
       }
+
+      div.round {
+        margin: 31px auto;
+        border-radius: 50%;
+        height: 130px;
+        width: 130px;
+        background: var(--google-blue-100);
+      }
     </style>
 
 
@@ -59,9 +70,24 @@
     <app-location route="{{route}}" use-hash-as-path></app-location>
     <app-route route="{{route}}" pattern="/:page" data="{{data}}"> </app-route>
 
+
     <app-drawer-layout>
       <app-drawer>
-        <section></section>
+        <section>
+          <div class="icon">
+            <div class="round">
+
+            </div>
+          </div>
+          <paper-listbox selected="{{data.page}}" attr-for-selected="data-page">
+            <paper-item data-page="repositories">
+              <iron-icon icon="turned-in-not"></iron-icon>Repositories
+            </paper-item>
+            <paper-item data-page="hives">
+              <iron-icon icon="folder-open"></iron-icon>Hives
+            </paper-item>
+          </paper-listbox>
+        </section>
       </app-drawer>
 
       <app-header-layout>
@@ -69,22 +95,29 @@
         <app-header fixed condenses shadow effects="resize-title">
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-            <div condensed-title>Test Drive app-header</div>
           </app-toolbar>
 
           <app-toolbar></app-toolbar>
 
           <app-toolbar>
-            <div main-title spacer>Test Drive</div>
+            <div main-title spacer>[[pageName(data.page)]]</div>
           </app-toolbar>
         </app-header>
 
-        <section id="repo-list">
+        <neon-animated-pages selected='{{data.page}}' attr-for-selected='data-page' entry-animation='fade-in-animation' exit-animation='fade-out-animation'>
+          <neon-animatable data-page='repositories'>
 
-          <template is="dom-repeat" items="[[repositories]]">
-            <repo-tab id$="[[item.name]]" item="[[item]]"></repo-tab>
-          </template>
-        </section>
+            <section id="repo-list">
+              <template is="dom-repeat" items="[[repositories]]">
+                <repo-tab id$="[[item.name]]" item="[[item]]"></repo-tab>
+              </template>
+            </section>
+
+          </neon-animatable>
+          <neon-animatable data-page='hives'>Hives list</neon-animatable>
+          <neon-animatable data-page='hive'>Single Hive</neon-animatable>
+        </neon-animated-pages>
+
 
       </app-header-layout>
       <paper-fab icon="add" on-tap="openDialog"></paper-fab>
@@ -104,8 +137,13 @@
         this.async(() => {
           document.body.scrollTop = this.$["repo-list"].scrollHeight;
         }, 100);
+      },
+      pageName(page) {
+        return _.capitalize(page)
       }
     });
   </script>
+
+</dom-module>
 
 </dom-module>

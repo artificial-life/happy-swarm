@@ -2,6 +2,7 @@
 
 <link rel="import" href="../../neon-animation/neon-animation-runner-behavior.html">
 <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../paper-menu-button/paper-menu-button.html">
 
 
 <dom-module id="repo-tab">
@@ -13,7 +14,6 @@
 
       .repo-info {
         transition: 1s height;
-        height: 60px;
         box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
         padding: 16px;
         margin: 24px;
@@ -31,7 +31,15 @@
     </style>
     <div class="repo-info" on-tap="test">
       <div class="title"> <span>[[item.name]] </span>
-        <paper-icon-button icon="more-vert"></paper-icon-button>
+        <paper-menu-button>
+          <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+          <paper-menu class="dropdown-content">
+            <paper-item>Edit</paper-item>
+            <paper-item>Delete</paper-item>
+            <paper-item>Readme</paper-item>
+            <paper-item>More</paper-item>
+          </paper-menu>
+        </paper-menu-button>
       </div>
       <div class="description"> [[item.description]] </div>
     </div>
